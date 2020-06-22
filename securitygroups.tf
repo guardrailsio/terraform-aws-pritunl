@@ -5,14 +5,25 @@ resource "aws_security_group" "pritunl" {
 
   # SSH access
   ingress {
+    description = ""
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = var.internal_cidrs
   }
 
+  # HTTP access
+  ingress {
+    description = ""
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = var.internal_cidrs
+  }
+
   # HTTPS access
   ingress {
+    description = ""
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -21,6 +32,7 @@ resource "aws_security_group" "pritunl" {
 
   # VPN WAN access
   ingress {
+    description = ""
     from_port   = 10000
     to_port     = 19999
     protocol    = "udp"
@@ -29,6 +41,7 @@ resource "aws_security_group" "pritunl" {
 
   # ICMP
   ingress {
+    description = ""
     from_port   = -1
     to_port     = -1
     protocol    = "icmp"
@@ -37,6 +50,7 @@ resource "aws_security_group" "pritunl" {
 
   # outbound internet access
   egress {
+    description = ""
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -53,6 +67,15 @@ resource "aws_security_group" "allow_from_office" {
   name        = "${var.resource_name_prefix}-whitelist"
   description = "Allows SSH connections and HTTP(s) connections from office"
   vpc_id      = var.vpc_id
+
+  # HTTP access
+  ingress {
+    description = "Allow HTTP access from everywhere, required for letsencrypt"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   # SSH access
   ingress {
@@ -83,6 +106,7 @@ resource "aws_security_group" "allow_from_office" {
 
   # outbound internet access
   egress {
+    description = ""
     from_port   = 0
     to_port     = 0
     protocol    = "-1"

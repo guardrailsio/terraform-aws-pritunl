@@ -30,14 +30,12 @@ resource "aws_instance" "pritunl" {
   ]
 
   subnet_id                   = var.public_subnet_id
-  associate_public_ip_address = false
+  associate_public_ip_address = true
 
-  tags = "${
-    merge(
+  tags = merge(
       map("Name", format("%s-%s", var.resource_name_prefix, "vpn")),
       var.tags,
     )
-  }"
 
   provisioner "remote-exec" {
     inline = [
@@ -48,24 +46,7 @@ resource "aws_instance" "pritunl" {
 
 }
 
-data "aws_instance" "pritunl_loaded" {
-  depends_on = [
-    aws_instance.pritunl
-  ]
-
-  filter {
-    name   = "image-id"
-    values = [data.aws_ami.oracle.id]
-  }
-
-  filter {
-    name   = "tag:Name"
-    values = [format("%s-%s", var.resource_name_prefix, "vpn")]
-  }
-
-}
-
 resource "aws_eip" "pritunl" {
-  instance = "${aws_instance.pritunl.id}"
+  instance = aws_instance.pritunl.id
   vpc      = true
 }
