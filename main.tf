@@ -36,14 +36,6 @@ resource "aws_instance" "pritunl" {
       map("Name", format("%s-%s", var.resource_name_prefix, "vpn")),
       var.tags,
     )
-
-  provisioner "remote-exec" {
-    inline = [
-      "sleep 60",
-      "sudo pritunl setup-key",
-    ]
-  }
-
 }
 
 resource "aws_eip" "pritunl" {
